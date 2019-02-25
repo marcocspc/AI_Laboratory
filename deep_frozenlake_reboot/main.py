@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import gym
 import random
@@ -46,7 +48,8 @@ def get_int_input (message, default_value):
 
 def get_string_input (message, default_value):
     try:
-        return str(input(message + " [Padrão " + str(default_value) + "] "))
+        string = str(input(message + " [Padrão " + str(default_value) + "] "))
+        return string if string != "" else return default_value
     except ValueError:
         return default_value
         
@@ -88,7 +91,7 @@ def main():
     max_steps = get_int_input("Insira a quantidade de acoes que o agente irá realizar " +
         "por episódio:", 100)
 
-    plot = get_string_input("Deseja ver os gráficos? S/N", "S")
+    graphs = get_string_input("Deseja ver os gráficos? S/N", "S")
 
     # List of rewards
     rewards = []
@@ -170,17 +173,18 @@ def main():
 
             x.decay_epsilon(episode)
 
-            #plt.figure("Média de Vitórias")
-            #plt.plot(victory_percentage)
+            if graphs == "S":
+                plt.figure("Média de Vitórias")
+                plt.plot(victory_percentage)
 
-            #plt.figure("Média de Recompensas")
-            #plt.plot(reward_mean)
+                plt.figure("Média de Recompensas")
+                plt.plot(reward_mean)
 
-            #lt.show()
+                lt.show()
 
-            #plt.pause(1e-10)
+                plt.pause(1e-10)
 
-            #plt.clf()
+                plt.clf()
 
     except KeyboardInterrupt:
         print()
