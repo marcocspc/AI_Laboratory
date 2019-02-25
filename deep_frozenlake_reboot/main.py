@@ -8,7 +8,8 @@ import sys
 from agent import Agent
 #from memory import Memory
 from matplotlib import pyplot as plt
-import os
+import pickle
+from datetime import datetime
 
 
 from gym.envs.registration import register
@@ -32,6 +33,7 @@ def convert_state(state):
     else:
         return None
 
+#utilizar uma melhor distribuição de recompensas
 def immediate_reward (reward):
     if reward == 1:
         return 1000
@@ -40,58 +42,34 @@ def immediate_reward (reward):
     else:
         return -1000
 
+#função auxiliar para obter input int do usuário
 def get_int_input (message, default_value):
     try:
         return int(input(message + " [Padrão " + str(default_value) + "] "))
     except ValueError:
         return default_value    
 
+#função auxiliar para obter input string do usuário
 def get_string_input (message, default_value):
     try:
         string = str(input(message + " [Padrão " + str(default_value) + "] "))
-        return string if string != "" else return default_value
+        return string if string != "" else default_value
     except ValueError:
         return default_value
-        
 
-
-def main():
-    #impedir o pyplot de congelar meu processo atual
-    plt.ion()
-
-    #silenciar tensorflow https://stackoverflow.com/questions/35911252/disable-tensorflow-debugging-information
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
-
-    print("Inicializando ambiente...")
-    env = gym.make("FrozenLake-v0")
-    #env = gym.make("FrozenLakeNotSlippery-v0")
-
-
-    print("Inicializando agente...")
-    action_size = env.action_space.n
-    state_size = env.observation_space.n
-    gamma = 0.96
-    learning_rate = 0.9
-    epsilon = 1.0                 # Exploration rate
-    max_epsilon = 1.0             # Exploration probability at start
-    min_epsilon = 0.01            # Minimum exploration probability 
-    decay_rate = 0.005
-
-    x = Agent(learning_rate, gamma, action_size, state_size, decay_rate,
-        epsilon = epsilon, max_epsilon = max_epsilon, min_epsilon =  min_epsilon)
-
+def train(agent, env):
     #memo_size = get_int_input("Olá! Insira o tamanho da memória utilizada para treinar o agente:", 50000)
     #memo = Memory(memo_size)
     
-    batch_size = get_int_input("Insira o tamanho do batch (quantos slots de memória serão utilizados por " +
-        "vez para treinar o agente:", 50)
+    #batch_size = get_int_input("Insira o tamanho do batch (quantos slots de memória serão utilizados por " +
+    #    "vez para treinar o agente:", 50)
 
     total_episodes = get_int_input("Insira a quantidade de episodios que o agente irá treinar:", 10000)
 
     max_steps = get_int_input("Insira a quantidade de acoes que o agente irá realizar " +
         "por episódio:", 100)
 
-    graphs = get_string_input("Deseja ver os gráficos? S/N", "S")
+    graphs = get_string_input("Deseja ver os gráficos? S/N", "N")
 
     # List of rewards
     rewards = []
@@ -128,8 +106,8 @@ def main():
                 #se nosso numero aleatorio for maior que epsilon
                 #devemos aproveitar o conhecimento adquirido
                 #se nao, explorar
-                if numero_aleatorio > x.epsilon:
-                    action = x.act(state)
+                if numero_aleatorio > agent.epsilon:
+                    action = agent.act(state)
                 else:
                     action = env.action_space.sample()
 
@@ -150,8 +128,8 @@ def main():
                 #memo.add_sample(sample)
 
                 #fazer o agente aprender com um exemplo da memoria
-                #x.learn_batch(memo.sample(batch_size))
-                x.learn(state, action, new_state, reward)
+                #agent.learn_batch(memo.sample(batch_size))
+                agent.learn(state, action, new_state, reward)
 
                 # Our new state is state
                 state = new_state
@@ -171,7 +149,7 @@ def main():
                 victories.append(0)
             victory_percentage.append(sum(victories)/(episode + 1))
 
-            x.decay_epsilon(episode)
+            agent.decay_epsilon(episode)
 
             if graphs == "S":
                 plt.figure("Média de Vitórias")
@@ -180,12 +158,11 @@ def main():
                 plt.figure("Média de Recompensas")
                 plt.plot(reward_mean)
 
-                lt.show()
+                plt.show()
 
                 plt.pause(1e-10)
 
                 plt.clf()
-
     except KeyboardInterrupt:
         print()
 
@@ -195,12 +172,18 @@ def main():
     print("Taxa de vitórias: " + str(victory_percentage[-1]))
     print()
 
-    try:
-        input("Aperte ENTER para ver o agente jogando. Ctrl-C para cancelar.")
-    except KeyboardInterrupt:
-        print("\nTchau!")
-        sys.exit(0)
+    string = get_string_input("Deseja salvar o agente? [S/N]", "N")
+    
+    if string == "S":
+        name = get_string_input("Insira um nome para o arquivo:", "agent.pkl")
 
+        try:
+            with open(name, "wb") as agent_file:
+                pickle.dump(agent, agent_file)
+        except IOError as e:
+            print(e)
+
+def play(agent, env):
     ############### O AGENTE VAI JOGAR DAQUI PRA BAIXO ############
 
     #redefinir ambiente
@@ -220,7 +203,7 @@ def main():
 
         for step in range(max_steps):
             # Take the action (index) that have the maximum expected future reward given that state
-            action = x.act(state)
+            action = agent.act(state)
             
             new_state, reward, done, info = env.step(action)
             new_state = convert_state(new_state)
@@ -237,6 +220,73 @@ def main():
 
     env.close()
 
+    string = get_string_input("Deseja salvar o agente? [S/N]", "S")
+
+    if string == "S":
+        name = get_string_input("Insira um nome para o arquivo:", "agent.pkl")
+
+        try:
+            with open(name, "wb") as agent_file:
+                pickle.dump(agent, agent_file)
+        except IOError as e:
+            print(e)
+
+
+def main():
+    #impedir o pyplot de congelar meu processo atual
+    plt.ion()
+
+    opcao = get_int_input("Qual ambiente desejaria utilizar?\n" + 
+        "1 - FrozenLake-v0\n" +
+        "2 - FrozenLakeNotSlippery-v0\n", 1)
+
+    print("Inicializando ambiente...")
+    if opcao == 1:
+        #criar ambiente frozenlake estocástico
+        env = gym.make("FrozenLake-v0")
+    else:
+        #criar ambiente frozenlake determinístico
+        env = gym.make("FrozenLakeNotSlippery-v0")
+
+    string = get_string_input("Deseja carregar algum arquivo serializado de um agente " +
+        "já treinado? [S/N]", "N")
+
+    x = None
+
+    if string == "S":
+        nome = get_string_input("Insira o nome do arquivo a ser carregado:", "agent.pkl")
+
+        print("Inicializando agente...")
+        with open(nome, "rb") as ai:
+            x = pickle.load(ai)
+    else:
+        print("Inicializando agente...")
+        action_size = env.action_space.n
+        state_size = env.observation_space.n
+        gamma = 0.96
+        learning_rate = 0.9
+        epsilon = 1.0                 # Exploration rate
+        max_epsilon = 1.0             # Exploration probability at start
+        min_epsilon = 0.01            # Minimum exploration probability 
+        decay_rate = 0.0005
+
+        x = Agent(learning_rate, gamma, action_size, state_size, decay_rate,
+            epsilon = epsilon, max_epsilon = max_epsilon, min_epsilon =  min_epsilon)
+
+    if string == "S":
+        string = get_string_input("Deseja treinar o agente carregado? [S/N]", "N")
+
+        if string == "S":
+            train(x, env)
+    else:
+        #treinar agente
+        train(x, env)
+
+    string = get_string_input("Deseja ver o agente jogando? [S/N]", "S")
+
+    if string == "S":
+        play(x, env)
+        
     input("Concluído! Aperte ENTER para finalizar.")
 
 main()
