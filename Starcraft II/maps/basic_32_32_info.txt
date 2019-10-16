@@ -1,0 +1,12 @@
+The map objective is to harvest a mineral spot.
+
+INFO:
+Player unit = SCV
+
+SCV coordinates (X, Y):
+SC2Editor: (3, 29)
+Natural: (3, 3)
+
+Mineral harvest point (X, Y):
+SC2Editor: (25, 7)
+Natural: (25, 25)
