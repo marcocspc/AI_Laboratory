@@ -19,4 +19,4 @@ H="/home/masearaujo"
 #export C_INCLUDE_PATH=/home/masearaujo/glibc/include:$C_INCLUDE_PATH
 #export CPLUS_INCLUDE_PATH=/home/masearaujo/glibc/include:$CPLUS_INCLUDE_PATH
 
-singularity run /home/masearaujo/scii.sif python3 /home/masearaujo/Git/URNAI-Tools/urnai/solve_simple64.py 
+singularity exec /home/masearaujo/scii.sif python3 /home/masearaujo/Git/URNAI-Tools/urnai/solve_simple64.py 
