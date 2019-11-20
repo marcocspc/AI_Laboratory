@@ -1,5 +1,6 @@
 #!/bin/bash
-#SBATCH --time=0-0:5
+#Padrao dias-horas:minutos
+#SBATCH --time=0-12:0
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --mail-user=
@@ -19,4 +20,4 @@ H="/home/masearaujo"
 #export C_INCLUDE_PATH=/home/masearaujo/glibc/include:$C_INCLUDE_PATH
 #export CPLUS_INCLUDE_PATH=/home/masearaujo/glibc/include:$CPLUS_INCLUDE_PATH
 
-singularity run /home/masearaujo/scii.sif python3 /home/masearaujo/Git/URNAI-Tools/urnai/solve_simple64.py 
+singularity exec /home/masearaujo/scii.sif python3 /home/masearaujo/Git/URNAI-Tools/urnai/solve_simple64.py 
