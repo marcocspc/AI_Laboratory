@@ -9,10 +9,9 @@ RUN pip3 install -e drts
 RUN cat drts/coding/requirements.txt | xargs -n 1 pip3 install; exit 0
 RUN cat drts/requirements.txt | xargs -n 1 pip3 install; exit 0
 
-RUN git clone https://github.com/marcocspc/AI_Laboratory.git
+RUN cd && git clone https://github.com/marcocspc/AI_Laboratory.git
+RUN cd && git clone https://github.com/pvnetto/URNAI-Tools.git 
 
 RUN Xvfb :99 -ac &
 
-ENV SDL_VIDEODRIVER dummy
-
-RUN python3 ./AI_Laboratory/DeepRTS/deep-rts.py
+RUN if [ "x$video" = "true" ] ; then echo "Video enabled, please remember to forward X session when running DeepRTS." ; else export SDL_VIDEODRIVER=dummy ; fi
