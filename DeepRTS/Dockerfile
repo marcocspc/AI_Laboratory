@@ -1,9 +1,9 @@
 FROM ubuntu:18.04
-MAINTAINER Per-Arne Andersen
+MAINTAINER marcocspc 
 
 RUN apt-get update && apt-get install -y apt-utils python3 python3-pip git xvfb build-essential cmake
 
-RUN git clone https://github.com/UIA-CAIR/DeepRTS.git drts --recurse-submodules && cd drts && git checkout c57a168 
+RUN git clone https://github.com/UIA-CAIR/DeepRTS.git drts --recurse-submodules && cd drts && git checkout e54dc6c 
 RUN pip3 install -e drts
 
 RUN cat drts/coding/requirements.txt | xargs -n 1 pip3 install; exit 0
@@ -14,6 +14,8 @@ RUN cd && git clone https://github.com/pvnetto/URNAI-Tools.git
 
 RUN Xvfb :99 -ac &
 
-RUN if [ "x$video" = "true" ] ; then echo "Video enabled, please remember to forward X session when running DeepRTS." ; else export SDL_VIDEODRIVER=dummy ; fi
+#RUN if [ "x$video" = "true" ] ; then echo "Video enabled, please remember to forward X session when running DeepRTS." ; else export SDL_VIDEODRIVER=dummy ; fi
+
+ENV SDL_VIDEODRIVER dummy
 
 ENTRYPOINT /bin/bash
