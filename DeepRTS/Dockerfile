@@ -5,7 +5,7 @@ ARG video
 RUN if [ "$video" = "1" ] ; then echo '\033[0;32mVideo enabled, please remember to forward X session when running DeepRTS.\033[0m' ; else echo '\033[0;32mDeepRTS video disabled\033[0m' ; fi
 
 ENV SDL_VIDEODRIVER=${video:+x11}
-ENV SDL_VIDEODRIVER=${SDL_VIDEODRIVER:-dummy}
+ENV SDL_VIDEODRIVER=${SDL_VIDEODRIVER:-}
 
 RUN echo $SDL_VIDEODRIVER
 
