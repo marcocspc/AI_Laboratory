@@ -7,7 +7,7 @@ from DeepRTS.python import Game
 episodes = 100
 steps = 100
 
-MAP="10x10-2v2.json" 
+MAP="32.json" 
 
 gui_config = Config(
             render=True,
