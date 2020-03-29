@@ -1,4 +1,4 @@
-# Samba Dockerfile
+# DeepRTS MACOS Dockerfile
 
 Credits to perara for original code. You can see it on:
 
