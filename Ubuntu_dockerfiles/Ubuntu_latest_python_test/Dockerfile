@@ -1,4 +1,4 @@
-FROM Ubuntu:latest
+FROM ubuntu:latest
 MAINTAINER marcocspc
 
 RUN apt-get update
