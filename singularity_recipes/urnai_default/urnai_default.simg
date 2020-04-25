@@ -1,0 +1,16 @@
+Bootstrap: docker
+From: ubuntu
+
+%help
+    This is a Singularity Recipe to build an URNAI capable Singularity Container.
+
+%labels
+    Maintainer marcocspc
+    Version 0.1
+
+%post
+    sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
+    apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install git python3 python3-pip -y
+    DEBIAN_FRONTEND=noninteractive apt-get build-dep python-pygame -y
+    cd / && git clone https://github.com/marcocspc/URNAI-Tools/ urnai
+    cd / && pip3 install -e urnai 
