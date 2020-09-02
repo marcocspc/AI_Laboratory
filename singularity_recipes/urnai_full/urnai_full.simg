@@ -23,3 +23,7 @@ From: tensorflow/tensorflow:latest-gpu
     pip3 install git+https://github.com/marcocspc/diditend@master
     DEBIAN_FRONTEND=noninteractive apt-get build-dep python-pygame -y
     cd / && URNAI_DEEPRTS=1 URNAI_VIZDOOM=1 URNAI_2048=1 pip3 install git+https://github.com/marcocspc/URNAI-Tools@master
+
+%environment
+    SDL_VIDEODRIVER=dummy
+    export SDL_VIDEODRIVER
