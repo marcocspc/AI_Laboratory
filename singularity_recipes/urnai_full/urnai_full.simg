@@ -26,4 +26,7 @@ From: tensorflow/tensorflow:latest-gpu
 
 %environment
     SDL_VIDEODRIVER=dummy
-    export SDL_VIDEODRIVER
+    LANG=en_US.UTF-8
+    PYTHONIOENCODING=utf8
+    export SDL_VIDEODRIVER LANG PYTHONIOENCODING
+
