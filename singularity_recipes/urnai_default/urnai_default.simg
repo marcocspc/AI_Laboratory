@@ -23,7 +23,10 @@ From: tensorflow/tensorflow:latest-gpu
     DEBIAN_FRONTEND=noninteractive apt-get install wget git python3 python3-pip build-essential zlib1g-dev libsdl2-dev libjpeg-dev nasm tar libbz2-dev libgtk2.0-dev cmake git libfluidsynth-dev libgme-dev libopenal-dev timidity libwildmidi-dev unzip build-essential zlib1g-dev libsdl2-dev libjpeg-dev nasm tar libbz2-dev libgtk2.0-dev cmake git libfluidsynth-dev libgme-dev libopenal-dev timidity libwildmidi-dev unzip libboost-all-dev -y 
     pip3 install numpy
     DEBIAN_FRONTEND=noninteractive apt-get build-dep python-pygame -y
+    export TMPDIR=$HOME/tmp
+    mkdir -p $TMPDIR
     cd / && pip3 install git+https://github.com/UFRN-URNAI/urnai-tools@master
+    rm -rf $TMPDIR
 
 %environment
     SDL_VIDEODRIVER=dummy

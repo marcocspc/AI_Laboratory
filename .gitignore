@@ -107,3 +107,6 @@ venv.bak/
 .vscode/
 *.swp
 *.sif
+
+#ignore .cache folder when building using singularity inside docker
+.cache/
